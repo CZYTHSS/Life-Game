@@ -27,11 +27,11 @@
       <input type=checkbox id="multithreading" /> <label for="multithreading">Use web worker</label> -->
       <label for="examples">Examples of patterns:</label>
       <select id="examples"></select>
-      <button id="random">Random</button>
+      <button id="random" onclick="randomInit()">Random</button>
       <button id="start" onclick="startEvolve()">Start</button>
-      <button id="stop" disabled>Stop</button>
-      <button id="step">Next</button>
-      <button id="clean">Clean</button>
+      <button id="stop" onclick="stopEvolve()">Stop</button>
+      <button id="step" onclick="nextClick()">Next</button>
+      <button id="clean" onclick="clearCanvas()">Clean</button>
       <br />
     </aside>
     <section>

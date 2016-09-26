@@ -1,6 +1,17 @@
+/* exported startEvolve */
+/* exported t */
+/* exported nextClick */
+/* exported stopEvolve */
+/* exported clearCanvas */
+/* exported randomInit */
 var size = 4;
 var gap = 1;
+var interval = 100;  //进化时间
+var t;  //用于settimeout与cleartimeout函数使用
 var world = document.getElementById('world');
+var i = 0; 
+var j = 0;   //用于循环计数的变量
+
 var initLoc = [
     // m
     '58|58', '58|59', '58|60', '58|61', '58|62', '58|63', '59|58', '59|61', '59|64', '60|58', '60|61', '60|64', '61|58', '61|61', '61|64', '62|58', '62|61', '62|64',
@@ -35,23 +46,27 @@ var initLoc = [
     // e
     '58|153', '58|154', '58|155', '59|152', '59|156', '60|152', '60|153', '60|154', '60|155', '60|156', '61|152', '62|153', '62|154', '62|155', '62|156'
 ];
-//用二位数组标记每一个cell是生是死  
+//用二位数组标记每一个cell是生是死,坐标记录从1开始  
 var cellFlag = new Array();
+var cellNextFlag = new Array();
+//与行列式方式不同的原因是为了与fillRect函数的意义保持一致,坐标先列再行
+for(i = 1; i <= 900/(size + gap); i++){
+    cellFlag[i] = new Array();
+    cellNextFlag[i] = new Array();
+    for(j = 1; j <= 600/(size + gap); j++){
+        cellFlag[i][j] = 0;
+        cellNextFlag[i][j] = 0;
+    }
+}
 function init(){
     
     var ctx = world.getContext('2d');
     ctx.fillStyle='black';
-    var x = 0;  //表示列数
-    var y = 0;  //表示行数。与行列式方式不同的原因是为了与fillRect函数的意义保持一致
     
-    for(x = 1; x <= 900/(size + gap); x++){
-        cellFlag[x] = new Array();
-        for(y = 1; y <= 600/(size + gap); y++){
-            cellFlag[x][y] = 0;
-        }
-    }
     
-    var i = 0;  //只用作计数的循环变量
+    i = 0;  //只用作计数的循环变量
+    
+    //初始化图样，设计为“mark's Life Game"
     for(i = 0; i < initLoc.length; i++){
         var pos = initLoc[i].split('|');
         cellFlag[pos[1]][pos[0]] = 1;
@@ -59,10 +74,115 @@ function init(){
     }
 }
 
+//开始执行进化演算
 function startEvolve(){
     var ctx = world.getContext('2d');
     ctx.fillStyle='black'; 
-    var i = 0;  //只用作计数的循环变量 
+    nextStep();
+    t = setTimeout('startEvolve()',interval);
 }
+
+//每次向下过渡一个状态
+function nextStep(){
+    var x = 0;
+    var y = 0;
+    var sum = 0;    //用于计算和临时存储每个细胞的拥挤程度
+    var xArray = new Array();
+    var yArray = new Array();
+    var ctx = world.getContext('2d');
+    ctx.clearRect(1, 1, 900, 600);
+    ctx.fillStyle = 'black';
+    for(x = 1; x <= 900/(size + gap); x++){
+        for(y = 1; y <= 600/(size + gap); y++){
+            sum = 0;
+            //计算每个细胞周围八个细胞的坐标，顺序是从左往右，从上至下。
+            xArray[0] = x - 1;
+            xArray[1] = x;
+            xArray[2] = x + 1;
+            xArray[3] = x - 1;
+            xArray[4] = x + 1;
+            xArray[5] = x - 1;
+            xArray[6] = x;
+            xArray[7] = x + 1;
+            yArray[0] = y - 1;
+            yArray[1] = y - 1;
+            yArray[2] = y - 1;
+            yArray[3] = y;
+            yArray[4] = y;
+            yArray[5] = y + 1;
+            yArray[6] = y + 1;
+            yArray[7] = y + 1;
+            
+            //为了满足题目要求的左右上下连续性，进行一些坐标变换。
+            for(i = 0; i < 8; i++){
+                if(xArray[i] == 0) xArray[i] = 900/(size + gap);
+                if(xArray[i] == (900/(size + gap)) + 1) xArray[i] = 1;
+                if(yArray[i] == 0) yArray[i] = 600/(size + gap);
+                if(yArray[i] == (600/(size + gap)) + 1) yArray[i] = 1;
+            }
+            //计算细胞拥挤度
+            for(i = 0; i < 8; i++){
+                sum += cellFlag[xArray[i]][yArray[i]];
+            }
+            if(sum == 3) cellNextFlag[x][y] = 1;
+            else if(sum == 2) cellNextFlag[x][y] = cellFlag[x][y];
+            else cellNextFlag[x][y] = 0;
+            
+            
+            if(cellNextFlag[x][y] == 1){
+                ctx.fillRect((1 +(size + gap) * x),(1 +(size + gap) * y),size,size);
+            }
+            
+        }
+    }
+    
+    for(x = 1; x <= 900/(size + gap); x++){
+        for(y = 1; y <= 600/(size + gap); y++){
+            cellFlag[x][y] = cellNextFlag[x][y];
+            cellNextFlag[x][y] = 0;
+        }
+    }
+}
+
+function nextClick(){
+    clearTimeout(t);
+    nextStep();
+}
+
+function stopEvolve(){
+    clearTimeout(t);
+}
+
+function clearCanvas(){
+    var x,y;
+    var ctx = world.getContext('2d');
+    ctx.clearRect(1,1,900,600);
+    for(x = 1; x <= 900/(size + gap); x++){
+        for(y = 1; y <= 600/(size + gap); y++){
+            cellFlag[x][y] = 0;
+            cellNextFlag[x][y] = 0;
+        }
+    }
+    clearTimeout(t);
+}
+
+function randomInit(){
+    var x,y;
+    clearTimeout(t);
+    var ctx = world.getContext('2d');
+    ctx.clearRect(1,1,900,600);
+    ctx.fillStyle = 'black';
+    var seed;
+    for(x = 1; x <= 900/(size + gap); x++){
+        for(y = 1; y <= 600/(size + gap); y++){
+            seed = Math.random();
+            if(seed >= 0.8){
+                cellFlag[x][y] = 1;
+                ctx.fillRect((1 +(size + gap) * x),(1 +(size + gap) * y),size,size);
+            }
+        }
+    }
+}
+
 init();
 
