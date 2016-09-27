@@ -89,6 +89,7 @@ function startEvolve(){
     t = setTimeout('startEvolve()',interval);
 }
 
+//计算下一个状态中各个细胞的生死
 function countNext(cellFlag){
     var xArray = new Array();
     var yArray = new Array();
@@ -140,7 +141,7 @@ function countNext(cellFlag){
 }
 
 
-//每次向下过渡一个状态
+//每次向下过渡一个状态，此函数中主要完成绘制
 function nextStep(cellFlag){
     var x = 0;
     var y = 0;
@@ -186,6 +187,7 @@ function clearCanvas(){
     clearTimeout(t);
 }
 
+//随机初始化画布
 function randomInit(){
     var x,y;
     clearTimeout(t);
@@ -204,6 +206,7 @@ function randomInit(){
     }
 }
 
+//重置到初始状态
 function resetCanvas(){
     clearTimeout(t);
     init(initLoc);
