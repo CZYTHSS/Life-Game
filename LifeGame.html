@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>生命游戏</title>
+    <link rel="stylesheet" href="lifegame-style.css" />
+  </head>
+  <body>
+    <aside>
+      <br />
+      <!-- <label for="height">Height: (cells)</label>
+      <input type="number" id="height" step="1" min="1" />
+      <label for="width">Width: (cells)</label>
+      <input type="number" id="width" step="1" min="1" />
+      <label for="unit">Size of each cell: (px)</label>
+      <input type="number" id="size" step="1" min="3" max="20" />
+      <label for="gap">Gap between cells: (px)</label>
+      <input type="number" id="gap" step="1" min="1" max="10" />
+      <button id="new">Generate</button> -->
+      <button id="reset" onclick="resetCanvas()">Reset</button>
+      <br />
+      <!-- <label for="density">Density of cells: <strong id="figure1"></strong></label>
+      <input type="range" id="density" step="0.01" min="0" max="1" />
+      <label for="interval">Interval: <strong id="figure2"></strong> (ms)</label>
+      <input type="range" id="interval" step="40" min="40" max="1000" />
+      <input type=checkbox id="multithreading" /> <label for="multithreading">Use web worker</label> -->
+      <label for="examples">Examples of patterns:</label>
+      <select id="examples"></select>
+      <button id="random" onclick="randomInit()">Random</button>
+      <button id="start" onclick="startEvolve()">Start</button>
+      <button id="stop" onclick="stopEvolve()">Stop</button>
+      <button id="step" onclick="nextClick()">Next</button>
+      <button id="clean" onclick="clearCanvas()">Clean</button>
+      <br />
+    </aside>
+    <section>
+      <h2>生命游戏</h2>
+      <!-- 定义了canvas的大小，后续不再改动 -->
+      <canvas id="world" height="601px" width = "901px"></canvas>
+    </section>
+    <script src="proc.js"></script>
+    
+  </body>
+</html>
