@@ -4,6 +4,7 @@
 /* exported stopEvolve */
 /* exported clearCanvas */
 /* exported randomInit */
+/* exported resetCanvas */
 var size = 4;
 var gap = 1;
 var interval = 100;  //进化时间
@@ -58,11 +59,16 @@ for(i = 1; i <= 900/(size + gap); i++){
         cellNextFlag[i][j] = 0;
     }
 }
-function init(){
+function init(initLoc){
     
     var ctx = world.getContext('2d');
+    ctx.clearRect(1,1,900,600);
     ctx.fillStyle='black';
-    
+    for(i = 1; i <= 900/(size + gap); i++){
+        for(j = 1; j <= 600/(size + gap); j++){
+            cellFlag[i][j] = 0;
+        }
+    }
     
     i = 0;  //只用作计数的循环变量
     
@@ -76,22 +82,18 @@ function init(){
 
 //开始执行进化演算
 function startEvolve(){
+    clearTimeout(t);
     var ctx = world.getContext('2d');
     ctx.fillStyle='black'; 
-    nextStep();
+    nextStep(cellFlag);
     t = setTimeout('startEvolve()',interval);
 }
 
-//每次向下过渡一个状态
-function nextStep(){
-    var x = 0;
-    var y = 0;
-    var sum = 0;    //用于计算和临时存储每个细胞的拥挤程度
+function countNext(cellFlag){
     var xArray = new Array();
     var yArray = new Array();
-    var ctx = world.getContext('2d');
-    ctx.clearRect(1, 1, 900, 600);
-    ctx.fillStyle = 'black';
+    var sum;
+    var x,y;
     for(x = 1; x <= 900/(size + gap); x++){
         for(y = 1; y <= 600/(size + gap); y++){
             sum = 0;
@@ -127,18 +129,36 @@ function nextStep(){
             if(sum == 3) cellNextFlag[x][y] = 1;
             else if(sum == 2) cellNextFlag[x][y] = cellFlag[x][y];
             else cellNextFlag[x][y] = 0;
-            
-            
+        }
+    }
+    for(x = 1; x <= 900/(size + gap); x++){
+        for(y = 1; y <= 600/(size + gap); y++){
+            cellFlag[x][y] = cellNextFlag[x][y];
+        }
+    }
+    return cellFlag;
+}
+
+
+//每次向下过渡一个状态
+function nextStep(cellFlag){
+    var x = 0;
+    var y = 0;
+    var ctx = world.getContext('2d');
+    ctx.clearRect(1, 1, 900, 600);
+    ctx.fillStyle = 'black';
+    
+    cellFlag = countNext(cellFlag);
+    for(x = 1; x <= 900/(size + gap); x++){
+        for(y = 1; y <= 600/(size + gap); y++){
             if(cellNextFlag[x][y] == 1){
                 ctx.fillRect((1 +(size + gap) * x),(1 +(size + gap) * y),size,size);
             }
-            
         }
     }
     
     for(x = 1; x <= 900/(size + gap); x++){
         for(y = 1; y <= 600/(size + gap); y++){
-            cellFlag[x][y] = cellNextFlag[x][y];
             cellNextFlag[x][y] = 0;
         }
     }
@@ -146,7 +166,7 @@ function nextStep(){
 
 function nextClick(){
     clearTimeout(t);
-    nextStep();
+    nextStep(cellFlag);
 }
 
 function stopEvolve(){
@@ -184,5 +204,9 @@ function randomInit(){
     }
 }
 
-init();
+function resetCanvas(){
+    clearTimeout(t);
+    init(initLoc);
+}
+init(initLoc);
 
