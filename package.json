@@ -1,0 +1,26 @@
+{
+  "name": "lifegame",
+  "version": "1.0.0",
+  "description": "a Conway's Life Game (based on js, software engineering 3 hw1)",
+  "main": "proc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CZYTHSS/Life-Game.git"
+  },
+  "author": "Mark Chen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CZYTHSS/Life-Game/issues"
+  },
+  "homepage": "https://github.com/CZYTHSS/Life-Game#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2"
+  },
+  "dependencies": {
+    "chai": "^3.5.0"
+  }
+}
